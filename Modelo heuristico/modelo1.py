@@ -69,16 +69,12 @@ def follow_ball(ball, width):
 
         center = width // 2
         error = center - cx
-
-        # 📏 velocidad según distancia
         if area < 1000:
             base = 2.5
         elif area < 3000:
             base = 1.8
         else:
             base = 1.2
-
-        # 🎯 dirección
         if abs(error) < 20:
             return base, base
         elif error > 0:
@@ -86,7 +82,7 @@ def follow_ball(ball, width):
         else:
             return base * 1.2, base * 0.6
 
-    # 🔍 búsqueda si se pierde
+    # búsqueda si se pierde
     if last_cx is not None:
         if last_cx < width / 2:
             return 0.8, 1.6
