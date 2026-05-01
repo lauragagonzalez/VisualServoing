@@ -6,9 +6,8 @@ import robotica
 ARQUITECTURA DE BROOKS REAL (MEJORADA)
 """
 
-# =========================
+
 # DETECCIÓN DE BOLA
-# =========================
 def detect_ball(img):
     hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 
@@ -28,9 +27,7 @@ def detect_ball(img):
     return cx, img.shape[1], area
 
 
-# =========================
 # MEMORIA
-# =========================
 last_cx = None
 last_seen_time = 0
 smooth_cx = None
@@ -40,16 +37,14 @@ corner_mode = False
 corner_dir = 1
 
 
-# =========================
+
 # ESQUINA
-# =========================
 def is_corner(front, left, right):
     return front < 0.45 and (left < 0.5 or right < 0.5)
 
 
-# =========================
+
 # EVITACIÓN
-# =========================
 def wall_bias(sonar):
     front = min(sonar[3:6])
     left = min(sonar[6:10])
@@ -65,9 +60,8 @@ def wall_bias(sonar):
     return base - turn, base + turn
 
 
-# =========================
-# SEGUIMIENTO BOLA (MEJORADO)
-# =========================
+
+# SEGUIMIENTO BOLA 
 def follow_ball(ball, width):
     global last_cx, last_seen_time, smooth_cx
 
@@ -103,9 +97,8 @@ def follow_ball(ball, width):
 
         return base - turn, base + turn
 
-    # =========================
+  
     # MEMORIA CUANDO SE PIERDE
-    # =========================
     last_seen_time += 1
 
     if last_cx is None:
@@ -120,9 +113,7 @@ def follow_ball(ball, width):
     return 1.0, -1.0
 
 
-# =========================
 # CONTROL PRINCIPAL
-# =========================
 def controller(sonar, ball, width):
     global corner_mode, corner_dir
 
@@ -130,9 +121,6 @@ def controller(sonar, ball, width):
     left_s = min(sonar[6:10])
     right_s = min(sonar[0:3])
 
-    # -------------------------
-    # ESQUINA
-    # -------------------------
     if corner_mode:
         if front > 0.7:
             corner_mode = False
@@ -151,16 +139,8 @@ def controller(sonar, ball, width):
         corner_mode = True
         corner_dir = 1 if right_s > left_s else -1
         return (-0.5 * corner_dir, 1.8 * corner_dir)
-
-    # -------------------------
-    # EMERGENCIA
-    # -------------------------
     if front < 0.25:
         return -2.0, 2.0
-
-    # -------------------------
-    # BOLA + PAREDES
-    # -------------------------
     wall = wall_bias(sonar)
 
     if ball is None:
@@ -174,9 +154,6 @@ def controller(sonar, ball, width):
     )
 
 
-# =========================
-# MAIN
-# =========================
 def main():
     coppelia = robotica.Coppelia()
     robot = robotica.P3DX(coppelia.sim, 'PioneerP3DX', use_camera=True)
